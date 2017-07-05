@@ -18,7 +18,8 @@ const indexRoutes = require("./routes/index");
 
 const app = express();
 
-mongoose.connect(process.env.DATABASEURL);
+const databaseUrl = process.env.DATABASEURL || "mongodb://localhost/yelp_camp";
+mongoose.connect(databaseUrl);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
