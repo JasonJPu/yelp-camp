@@ -48,6 +48,8 @@ app.use((req, res, next) => {
   next();
 });
 
+app.locals.moment = require("moment");
+
 app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
