@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Campground = require("../models/campground");
 const middleware = require("../middleware");
+const geocoder = require("geocoder");
 
 // INDEX - show all campgrounds
 router.get("/", (req, res) => {
@@ -24,13 +25,25 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
   };
   const newCampground = req.body.campground;
   newCampground.author = author;
-  // create a new campground and save to db
-  Campground.create(newCampground, (err, newlyCreated) => {
+  geocoder.geocode(req.body.location, (err, data) => {
     if (err) {
-      console.log(err);
+      req.flash("error", "Error finding campground location");
+      res.redirect("/campgrounds/new");
     } else {
-      // redirect to campgrounds page
-      res.redirect("/campgrounds");
+      newCampground.lat = data.results[0].geometry.location.lat;
+      newCampground.lng = data.results[0].geometry.location.lng;
+      newCampground.location = data.results[0].formatted_address;
+      // create a new campground and save to db
+      Campground.create(newCampground, (err, newlyCreated) => {
+        if (err) {
+          req.flash("error", "Error adding campground");
+          res.redirect("back");
+        } else {
+          // redirect to campgrounds page
+          req.flash("success", "Successfully added new campground!");
+          res.redirect("/campgrounds");
+        }
+      });
     }
   });
 });
@@ -62,11 +75,25 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 
 // UPDATE
 router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
-  Campground.findByIdAndUpdate(req.params.id, req.body.campground, (err, updatedCampground) => {
+  let newCampground = req.body.campground;
+  geocoder.geocode(req.body.location, (err, data) => {
     if (err) {
-      res.redirect("/campgrounds");
+      req.flash("error", "Error finding campground location");
+      res.redirect("/campgrounds/new");
     } else {
-      res.redirect(`/campgrounds/${req.params.id}`);
+      newCampground.lat = data.results[0].geometry.location.lat;
+      newCampground.lng = data.results[0].geometry.location.lng;
+      newCampground.location = data.results[0].formatted_address;
+      // create a new campground and save to db
+      Campground.findByIdAndUpdate(req.params.id, newCampground, (err, updatedCampground) => {
+        if (err) {
+          req.flash("error", "Error updating campground");
+          res.redirect("back");
+        } else {
+          req.flash("success", "Successfully updated campground!");
+          res.redirect(`/campgrounds/${req.params.id}`);
+        }
+      });
     }
   });
 });

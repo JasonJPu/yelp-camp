@@ -66,20 +66,19 @@
       center: center,
       scrollwheel: false
     });
+    let contentString = `<strong><%= campground.name %><br / /><%= campground.location %></strong><p><%= campground.description %></p>`
     let infowindow = new google.maps.InfoWindow({
       content: contentString
     });
     let marker = new google.maps.Marker({
       position: center,
-      maps: map,
+      map: map
     });
-    marker.addEventListener("click", () => {
+    marker.addListener("click", () => {
       infowindow.open(map, marker);
     });
   }
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBcj4T1xxATAKk8PkatvBbP6JNCEEmplEA&callback=initMap">
-
-</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=<%= process.env.MAPS_API_KEY %>&callback=initMap"></script>
 
 <% include ../partials/footer %>
