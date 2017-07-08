@@ -9,6 +9,14 @@
     <h1>Welcome to YelpCamp!</h1>
     <p>View our hand-picked campgrounds from all over the world</p>
     <p><a class="btn btn-primary btn-lg" href="/campgrounds/new">Add New Campground</a></p>
+    <p>
+      <form class="form-inline" action="/campgrounds" method="get">
+        <div class="form-group">
+          <input class="form-control" type="text" name="search" placeholder="Search campgounds">
+          <button class="btn btn-default">Search</button>
+        </div>
+      </form>
+    </p>
   </div>
 </header>
 

@@ -4,16 +4,36 @@ const Campground = require("../models/campground");
 const middleware = require("../middleware");
 const geocoder = require("geocoder");
 
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
 // INDEX - show all campgrounds
 router.get("/", (req, res) => {
-  // Get all campgrounds from db
-  Campground.find({}, (err, campgrounds) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.render("campgrounds/index", { campgrounds, page: "campgrounds" });
-    }
-  });
+  if (req.query.search) {
+    // fuzzy search
+    const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+    Campground.find({ name: regex }, (err, campgrounds) => {
+      if (err) {
+        console.log(err);
+      } else {
+        if (campgrounds.length == 0) {
+          res.render("campgrounds/index", { campgrounds, page: "campgrounds", error: "No campgrounds found!" });
+        } else {
+          res.render("campgrounds/index", { campgrounds, page: "campgrounds" });
+        }
+      }
+    });
+  } else {
+    // Get all campgrounds from db
+    Campground.find({}, (err, campgrounds) => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.render("campgrounds/index", { campgrounds, page: "campgrounds" });
+      }
+    });
+  }
 });
 
 // CREATE -- add new campground to DB
