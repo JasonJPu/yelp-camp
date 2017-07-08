@@ -174,12 +174,13 @@ router.post("/reset/:token", (req, res) => {
         }
         if (req.body.password === req.body.confirm) {
           user.setPassword(req.body.password, (err) => {
+            console.log(req.body.password);
             user.resetPasswordToken = undefined;
             user.resetPasswordExpires = undefined;
-          });
-          user.save((err) => {
-            req.logIn(user, (err) => {
-              done(err, user);
+            user.save((err) => {
+              req.logIn(user, (err) => {
+                done(err, user);
+              });
             });
           });
         } else {
