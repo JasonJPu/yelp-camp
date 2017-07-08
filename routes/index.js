@@ -35,12 +35,22 @@ router.get("/login", (req, res) => {
 });
 
 // handle login logic
-router.post("/login", passport.authenticate("local", {
-  failureRedirect: "/login",
-  failureFlash: true
-}), (req, res) => {
-  req.flash("success", `Welcome back ${req.body.username}!`);
-  res.redirect("/campgrounds");
+router.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) { return next(err); }
+    if (!user) {
+      req.flash("error", "Username or password is incorrect.");
+      return res.redirect("/login");
+    }
+    req.logIn(user, (err) => {
+      if (err) { return next(err); }
+      const redirectTo = req.session.redirectTo ? req.session.redirectTo : "/campgrounds";
+      delete req.session.redirectTo;
+      req.flash("success", `Welcome back ${req.body.username}!`);
+      return res.redirect(redirectTo);
+    });
+    return;
+  })(req, res, next);
 });
 
 // logout route
@@ -49,13 +59,5 @@ router.get("/logout", (req, res) => {
   req.flash("success", "Successfully logged out!")
   res.redirect("/campgrounds");
 });
-
-// middleware
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect("/login");
-}
 
 module.exports = router;

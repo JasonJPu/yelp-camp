@@ -6,7 +6,7 @@ const geocoder = require("geocoder");
 
 function escapeRegex(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-};
+}
 
 // INDEX - show all campgrounds
 router.get("/", (req, res) => {
@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
       if (err) {
         console.log(err);
       } else {
-        if (campgrounds.length == 0) {
+        if (campgrounds.length === 0) {
           res.render("campgrounds/index", { campgrounds, page: "campgrounds", error: "No campgrounds found!" });
         } else {
           res.render("campgrounds/index", { campgrounds, page: "campgrounds" });
