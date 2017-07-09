@@ -19,25 +19,30 @@ router.get("/register", (req, res) => {
 
 // sign up logic
 router.post("/register", (req, res) => {
-  const newUser = new User(
-    {
-      username: req.body.username,
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      profilePic: req.body.profilePic,
-      email: req.body.email,
+  if (req.body.password === req.body.confirm) {
+    const newUser = new User(
+      {
+        username: req.body.username,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        profilePic: req.body.profilePic,
+        email: req.body.email,
+      });
+    User.register(newUser, req.body.password, (err, user) => {
+      if (err) {
+        console.log(err);
+        req.flash("error", err.message);
+        return res.redirect("/register");
+      }
+      passport.authenticate("local")(req, res, () => {
+        req.flash("success", `Successfully signed up! Welcome to YelpCamp, ${user.username}!`)
+        res.redirect("/campgrounds");
+      });
     });
-  User.register(newUser, req.body.password, (err, user) => {
-    if (err) {
-      console.log(err);
-      req.flash("error", err.message);
-      return res.redirect("/register");
-    }
-    passport.authenticate("local")(req, res, () => {
-      req.flash("success", `Successfully signed up! Welcome to YelpCamp, ${user.username}!`)
-      res.redirect("/campgrounds");
-    });
-  });
+  } else {
+    req.flash("error", "Passwords do not match.");
+    res.redirect("back");
+  }
 });
 
 // show login page
