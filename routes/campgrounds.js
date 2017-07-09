@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Campground = require("../models/campground");
+const User = require("../models/user");
 const middleware = require("../middleware");
 const geocoder = require("geocoder");
 
@@ -80,8 +81,20 @@ router.get("/:id", (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      // render show template with that campground
-      res.render("campgrounds/show", { campground: foundCampground });
+      User.findById(foundCampground.author.id, (err, foundUser) => {
+        if (err) {
+          console.log(err);
+        } else {
+          Campground.find({ _id: { $ne: foundCampground._id } }).where("author.id").equals(foundUser._id).exec((err, userCampgrounds) => {
+            if (err) {
+              console.log(err);
+            } else {
+              // render show template with that campground
+              res.render("campgrounds/show", { campground: foundCampground, user: foundUser, userCampgrounds });
+            }
+          });
+        }
+      });
     }
   });
 });
