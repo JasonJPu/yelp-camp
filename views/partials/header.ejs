@@ -28,11 +28,11 @@
           </ul>
           <ul class="nav navbar-nav navbar-right">
             <% if (!currentUser) { %>
-              <li class="<%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>"><a href="/login">Login</a></li>
-              <li class="<%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>"><a href="/register">Sign Up</a></li>
+              <li class="<%= typeof page !== 'undefined' && page === 'login' ? 'active' : '' %>"><a href="/accounts/login">Login</a></li>
+              <li class="<%= typeof page !== 'undefined' && page === 'register' ? 'active' : '' %>"><a href="/accounts/register">Sign Up</a></li>
             <% } else { %>
               <li><a href="#">Signed in as <strong><%= currentUser.username %></strong></a></li>
-              <li><a href="/logout">Logout</a></li>
+              <li><a href="/accounts/logout">Logout</a></li>
             <% } %>
           </ul>
         </div>

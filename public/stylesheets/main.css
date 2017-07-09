@@ -18,9 +18,13 @@ h1 {
   text-align: center;
 }
 
-h1 + div {
+.entry-form {
   width: 30%;
   margin: 25px auto;
+}
+
+legend {
+  text-align: center;
 }
 
 /* Google Maps */

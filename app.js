@@ -14,6 +14,7 @@ const seedDB = require("./seeds");
 // requiring routes
 const campgroundRoutes = require("./routes/campgrounds");
 const commentRoutes = require("./routes/comments");
+const accountRoutes = require("./routes/accounts");
 const indexRoutes = require("./routes/index");
 
 const app = express();
@@ -53,6 +54,7 @@ app.locals.moment = require("moment");
 app.use("/", indexRoutes);
 app.use("/campgrounds", campgroundRoutes);
 app.use("/campgrounds/:id/comments", commentRoutes);
+app.use("/accounts", accountRoutes);
 
 app.listen(process.env.PORT || 9000, () => {
   console.log("The YelpCamp Server has started!");
