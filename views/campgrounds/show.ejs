@@ -8,13 +8,11 @@
         <div class="panel-title"><%= user.firstName + " " + user.lastName %></div>
       </div>
       <div class="panel-body">
-        <p>
-          <a href="/users/<%= campground.author.id %>"><%= campground.author.username %></a>
-        </p>
         <div class="thumbnail">
           <img src="<%= user.profilePic %>" alt="user profile image">
           <div class="caption">
-            <a href="mailto:<%= user.email %>"><%= user.email %></a>
+            <p>Username: <%= campground.author.username %></a></p>
+            <p>Email: <a href="mailto:<%= user.email %>"><%= user.email %></a></p>
           </div>
         </div>
       </div>
