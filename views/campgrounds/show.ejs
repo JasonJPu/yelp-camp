@@ -11,9 +11,6 @@
         <p>
           <a href="/users/<%= campground.author.id %>"><%= campground.author.username %></a>
         </p>
-        <p>
-          <em><%= moment(campground.createdAt).fromNow() %></em>
-        </p>
         <div class="thumbnail">
           <img src="<%= user.profilePic %>" alt="user profile image">
           <div class="caption">
@@ -37,6 +34,9 @@
       <div class="caption-full">
         <h4 class="pull-right">$<%= campground.price %>/night</h4>
         <h4><a href="#"><%= campground.name %></a></h4>
+        <p>
+          Submitted <em><%= moment(campground.createdAt).fromNow() %></em>
+        </p>
         <p><%= campground.description %></p>
         <% if (currentUser && (campground.author.id.equals(currentUser._id) || currentUser.isAdmin)) { %>
           <a class="btn btn-warning" href="/campgrounds/<%= campground._id %>/edit">Edit</a>

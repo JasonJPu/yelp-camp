@@ -34,13 +34,6 @@
   content: normal;
 }
 
-.image {
-  width: 100%;
-  height: 250px;
-  background-size: cover;
-  background-position: center;
-}
-
 h1 {
   text-align: center;
 }
