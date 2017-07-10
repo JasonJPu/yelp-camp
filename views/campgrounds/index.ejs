@@ -26,11 +26,11 @@
   </div>
 </div>
 
-<div class="row text-center" style="display:flex; flex-wrap: wrap;">
+<div class="row text-center flex">
   <% campgrounds.forEach((campground) => { %>
     <div class="col-md-3 col-sm-6">
       <div class="thumbnail">
-        <img src="<%= campground.image %>" alt="Campground Image">
+        <img class="image" src="<%= campground.image %>" alt="Campground Image">
         <div class="caption">
           <h4><%= campground.name %></h4>
         </div>
