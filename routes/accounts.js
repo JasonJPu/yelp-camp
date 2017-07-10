@@ -16,7 +16,7 @@ router.get("/register", (req, res) => {
 router.post("/register", (req, res, next) => {
   if (req.body.password !== req.body.confirm) {
     req.flash("error", "Passwords do not match.");
-    return res.redirect("back");
+    res.redirect("back");
   }
   async.waterfall([
     (done) => {
@@ -77,9 +77,7 @@ http://${req.headers.host}/accounts/authenticate/${token}
     },
   ], (err) => {
     if (err) {
-      console.log(err);
-      req.flash("error", err.message);
-      return res.redirect("back");
+      return next(err);
     }
     User.findOne({ username: req.body.username }, (err, user) => {
       passport.authenticate("local")(req, res, () => {
@@ -129,9 +127,8 @@ router.post("/login", (req, res, next) => {
       const redirectTo = req.session.redirectTo ? req.session.redirectTo : "/campgrounds";
       delete req.session.redirectTo;
       req.flash("success", `Welcome back ${req.body.username}!`);
-      return res.redirect(redirectTo);
+      res.redirect(redirectTo);
     });
-    return;
   })(req, res, next);
 });
 
@@ -237,7 +234,7 @@ router.post("/reset/:token", (req, res) => {
           });
         } else {
           req.flash("error", "Passwords do not match.");
-          res.redirect("back");
+          return res.redirect("back");
         }
       });
     },
