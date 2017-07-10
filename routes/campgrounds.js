@@ -110,7 +110,7 @@ router.get("/:id/edit", middleware.checkCampgroundOwnership, (req, res) => {
 router.put("/:id", middleware.checkCampgroundOwnership, (req, res) => {
   let newCampground = req.body.campground;
   geocoder.geocode(req.body.location, (err, data) => {
-    if (err) {
+    if (err || data.results.length === 0) {
       req.flash("error", "Error finding campground location");
       res.redirect("/campgrounds/new");
     } else {

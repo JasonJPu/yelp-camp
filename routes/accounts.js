@@ -104,6 +104,7 @@ router.get("/authenticate/:token", (req, res) => {
         req.flash("error", "Something went wrong!");
         res.redirect("/campgrounds");
       }
+      req.logout();
       req.flash("success", "Your account has been successfully authenticated!");
       res.redirect("/accounts/login");
     });
