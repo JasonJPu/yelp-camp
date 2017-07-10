@@ -20,6 +20,14 @@ router.post("/register", (req, res, next) => {
   }
   async.waterfall([
     (done) => {
+      User.find({ email: req.body.email }, (err, foundUser) => {
+        if (foundUser.length !== 0) {
+          err = new Error("A user with the given email is already registered.");
+        }
+        done(err);
+      });
+    },
+    (done) => {
       crypto.randomBytes(20, (err, buf) => {
         const token = buf.toString("hex");
         done(err, token);
