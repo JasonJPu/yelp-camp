@@ -5,7 +5,7 @@ const Comment = require("../models/comment");
 const middleware = require("../middleware");
 
 // Comments New
-router.get("/new", middleware.isLoggedIn, (req, res) => {
+router.get("/new", middleware.isLoggedIn, middleware.isEmailAuthenticated, (req, res) => {
   Campground.findById(req.params.id, (err, campground) => {
     if (err) {
       console.log(err);
@@ -16,7 +16,7 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 });
 
 // Comments Create
-router.post("/", middleware.isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, middleware.isEmailAuthenticated, (req, res) => {
   // lookup campground using ID
   Campground.findById(req.params.id, (err, campground) => {
     if (err) {

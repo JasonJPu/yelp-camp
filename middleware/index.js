@@ -55,4 +55,15 @@ middlewareObj.isLoggedIn = function isLoggedIn(req, res, next) {
   res.redirect("/accounts/login");
 };
 
+middlewareObj.isEmailAuthenticated = function isEmailAuthenticated(req, res, next) {
+  if (req.user.isEmailAuthenticated === true) {
+    return next();
+  }
+  req.flash("error", "You need to authenticate your email before you can do that!")
+  if (req.headers.referer === `${req.protocol}://${req.headers.host}/accounts/login`) {
+    return res.redirect("/campgrounds");
+  }
+  res.redirect("back");
+};
+
 module.exports = middlewareObj;

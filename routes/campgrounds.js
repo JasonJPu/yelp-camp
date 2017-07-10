@@ -13,7 +13,7 @@ function escapeRegex(text) {
 router.get("/", (req, res) => {
   if (req.query.search) {
     // fuzzy search
-    const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+    const regex = new RegExp(escapeRegex(req.query.search), "gi");
     Campground.find({ name: regex }, (err, campgrounds) => {
       if (err) {
         console.log(err);
@@ -38,7 +38,7 @@ router.get("/", (req, res) => {
 });
 
 // CREATE -- add new campground to DB
-router.post("/", middleware.isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, middleware.isEmailAuthenticated, (req, res) => {
   // get data from form and add to campgrounds db
   const author = {
     id: req.user._id,
@@ -70,7 +70,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
 });
 
 // NEW - show form to create new campground
-router.get("/new", middleware.isLoggedIn, (req, res) => {
+router.get("/new", middleware.isLoggedIn, middleware.isEmailAuthenticated, (req, res) => {
   res.render("campgrounds/new");
 });
 

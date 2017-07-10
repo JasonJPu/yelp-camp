@@ -13,31 +13,93 @@ router.get("/register", (req, res) => {
 });
 
 // sign up logic
-router.post("/register", (req, res) => {
-  if (req.body.password === req.body.confirm) {
-    const newUser = new User(
-      {
-        username: req.body.username,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        profilePic: req.body.profilePic,
-        email: req.body.email,
-      });
-    User.register(newUser, req.body.password, (err, user) => {
-      if (err) {
-        console.log(err);
-        req.flash("error", err.message);
-        return res.redirect("back");
-      }
-      passport.authenticate("local")(req, res, () => {
-        req.flash("success", `Successfully signed up! Welcome to YelpCamp, ${user.username}!`)
-        res.redirect("/campgrounds");
-      });
-    });
-  } else {
+router.post("/register", (req, res, next) => {
+  if (req.body.password !== req.body.confirm) {
     req.flash("error", "Passwords do not match.");
     res.redirect("back");
   }
+  async.waterfall([
+    (done) => {
+      crypto.randomBytes(20, (err, buf) => {
+        const token = buf.toString("hex");
+        done(err, token);
+      });
+    },
+    (token, done) => {
+      const newUser = new User(
+        {
+          username: req.body.username,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          profilePic: req.body.profilePic,
+          email: req.body.email,
+          emailAuthenticationToken: token,
+        });
+      User.register(newUser, req.body.password, (err, user) => {
+        done(err, user, token);
+      });
+    },
+    (user, token, done) => {
+      const smtpTransport = nodemailer.createTransport({
+        service: "Gmail",
+        auth: {
+          user: "donotreplytomethanks@gmail.com",
+          pass: process.env.GMAILPW,
+        },
+      });
+      const mailOptions = {
+        to: user.email,
+        from: "donotreplytomethanks@gmail.com",
+        subject: "YelpCamp Email Authentication",
+        text: `Hi ${user.firstName},
+
+Thanks for joining YelpCamp!
+
+You're almost there. Just one more step!
+
+Please confirm your email address by clicking on the link below.
+
+http://${req.headers.host}/accounts/authenticate/${token}
+`
+      };
+      smtpTransport.sendMail(mailOptions, (err) => {
+        console.log("mail sent");
+        done(err, "done");
+      });
+    },
+  ], (err) => {
+    if (err) {
+      console.log(err);
+      req.flash("error", err.message);
+      return res.redirect("back");
+    }
+    User.findOne({ username: req.body.username }, (err, user) => {
+      passport.authenticate("local")(req, res, () => {
+        req.flash("success", `Successfully signed up! Welcome to YelpCamp, ${user.username}! We have sent you an e-mail to activate your account.`)
+        res.redirect("/campgrounds");
+      });
+    });
+  });
+});
+
+// email authentication route
+router.get("/authenticate/:token", (req, res) => {
+  User.findOne({ emailAuthenticationToken: req.params.token }, (err, user) => {
+    if (!user) {
+      req.flash("error", "Email authentication token is invalid");
+      return res.redirect("/campgrounds");
+    }
+    user.isEmailAuthenticated = true;
+    user.emailAuthenticationToken = undefined;
+    user.save((err) => {
+      if (err) {
+        req.flash("error", "Something went wrong!");
+        res.redirect("/campgrounds");
+      }
+      req.flash("success", "Your account has been successfully authenticated!");
+      res.redirect("/accounts/login");
+    });
+  });
 });
 
 // show login page
@@ -80,7 +142,7 @@ router.post("/forgot", (req, res, next) => {
   async.waterfall([
     (done) => {
       crypto.randomBytes(20, (err, buf) => {
-        let token = buf.toString("hex");
+        const token = buf.toString("hex");
         done(err, token);
       });
     },
