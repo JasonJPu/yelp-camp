@@ -1,5 +1,6 @@
 body {
   padding-top: 70px;
+  margin-bottom: 20px;
 }
 
 .thumbnail img {
@@ -55,8 +56,4 @@ legend {
 #map {
   height: 400px;
   width: 100%;
-}
-
-.container {
-  margin-bottom: 20px;
 }
