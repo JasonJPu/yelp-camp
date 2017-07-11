@@ -13,7 +13,7 @@ router.get("/register", (req, res) => {
 });
 
 // sign up logic
-router.post("/register", (req, res, next) => {
+router.post("/register", (req, res) => {
   if (req.body.password !== req.body.confirm) {
     req.flash("error", "Passwords do not match.");
     res.redirect("back");
@@ -77,7 +77,8 @@ http://${req.headers.host}/accounts/authenticate/${token}
     },
   ], (err) => {
     if (err) {
-      return next(err);
+      req.flash("error", err.message);
+      return res.redirect("back");
     }
     User.findOne({ username: req.body.username }, (err, user) => {
       passport.authenticate("local")(req, res, () => {
