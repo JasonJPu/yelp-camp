@@ -56,3 +56,7 @@ legend {
   height: 400px;
   width: 100%;
 }
+
+.container {
+  margin-bottom: 20px;
+}
