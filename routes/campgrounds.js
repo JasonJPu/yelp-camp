@@ -47,7 +47,7 @@ router.post("/", middleware.isLoggedIn, middleware.isEmailAuthenticated, (req, r
   const newCampground = req.body.campground;
   newCampground.author = author;
   geocoder.geocode(req.body.location, (err, data) => {
-    if (err) {
+    if (err || data.results.length === 0) {
       req.flash("error", "Error finding campground location");
       res.redirect("/campgrounds/new");
     } else {
