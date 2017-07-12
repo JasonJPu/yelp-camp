@@ -1,6 +1,6 @@
 # YelpCamp
 
-Yelp camp is an app for sharing campgrounds made using NodeJS, Express, and MongoDB. 
+Yelp camp is an app for sharing campgrounds made using NodeJS, Express, and MongoDB. It is live here: https://tranquil-big-bend-37945.herokuapp.com
 
 It is complete with the ability to add, update, and delete campgrounds, all implemented with RESTful routing. For each user, there is email authentication upon registration, and password resets in case the user has forgotten their email. A search menu in the navigation bar can be used for fuzzy searching campgrounds. Flash banners are at the top to provide success and error messages for the user.
 
